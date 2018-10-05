@@ -6,7 +6,7 @@
 using namespace std;
 
 // Create functions which will be used in file
-int minElevationmaxElevationElevation(int mapRow, int mapColumns, istream& readFile, vector< vector<int> >& vectorMap)
+int minMaxElevation(int mapRow, int mapColumns, istream& readFile, vector< vector<int> >& vectorMap)
 {
     double minElevation = 90000, maxElevation = -90000;
     int temp = 0;
@@ -58,28 +58,37 @@ int main()
 {
   // Declare the variables
   ifstream readFile;
-  ofstream finalOutput;
+  ofstream finalOutput; // Output file stream
    
   int mapRow, mapColumns;
   int minElevation = 0, maxElevation = 0;
   vector <vector<int>> vectorMap;
-  string filename; 
+  string filename, outputFilename; 
   
   // Ask the user for the input
-  cout << "Enter the number of rows in the map" << endl;
+  cout << "Enter the number of rows in the map: ";
   cin >> mapRow;
-  cout << "Enter the number of col in the map" << endl;
+  cout << "Enter the number of col in the map: ";
   cin >> mapColumns;
-  cout << "Enter the filename" << endl;
+  cout << "Enter the filename: ";
   cin >> filename;
   
-  // Try to open file
+  // initialize output file name
+  outputFilename = filename + ".ppm";
+  
+  // Try to open files for input and output
    readFile.open(filename);
+   finalOutput(outputFilename);
   
   // If the file does not open
    if (!readFile.is_open()) 
    {
       cout << "Error: Could not open file " << filename << endl;
+      return 1;
+   }
+   if (!finalOutput.is_open()) 
+   {
+      cout << "Error: Could not open file " << outputFilename << endl;
       return 1;
    }
   
@@ -103,24 +112,30 @@ int main()
 		  vectorMap.push_back(temp);
       }
   }
-
-      for(int i = 0; i < mapRow; i++){
-		  //cout<<"i:"<<i;
-          for (int j = 0; j < mapColumns; j++){
-			  //cout<<"j:"<<j;
-              cout<< vectorMap.at(i).at(j)<<",";
-          }
-		  //cout<<endl;
-      }
-  cout<<endl<<"done"<<endl;
   
   // call the function to find the minElevation and maxElevation value
     minElevationmaxElevationElevation(mapRow, mapColumns, readFile, vectorMap);
     computeColor(minElevation, maxElevation, mapRow, mapColumns, readFile, vectorMap);
     
-    
+	
+	while(!finalOutput.eof()) 
+	{
+		of << "P3" << endl;
+		of << mapColumns << " " << mapRow << endl;
+		of << "255" << endl;
+		
+		for(int i = 0; i < mapRow; i++){
+          for (int j = 0; j < mapColumns; j++){
+              finalOutput << R.at(i).at(j)<<" ";
+			  finalOutput << G.at(i).at(j)<<" ";
+			  finalOutput << B.at(i).at(j)<<" ";
+          }
+        }
+		
+	}
   // Done with file, close it
    readFile.close();
+   finalOutput.close();
    
    return 0;
 }
